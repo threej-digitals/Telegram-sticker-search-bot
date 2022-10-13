@@ -1,7 +1,7 @@
 require('dotenv').config();
 const {Markup} = require('telegraf');
 const bot = new (require("telegraf").Telegraf)(process.env.BOT_TOKEN);
-const tgbot = new require('./modules/tgbot').Tgbot;
+const tgbot = new (require('./modules/tgbot').Tgbot);
 
 // handle bot commands
 bot.use(async (ctx, next)=>{

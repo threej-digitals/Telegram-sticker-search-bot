@@ -10,8 +10,12 @@ module.exports.handleCommands = function(update){
         //send menu for interaction
         await ctx.reply(`I will help you finding telegram sticker.`,{
             reply_markup : Markup.inlineKeyboard([
-                [Markup.button.switchToCurrentChat('🔎 Search stickers','')],
-                [Markup.button.url('➕ Add sticker','https://t.me/threej_bot')]
+                [
+                    Markup.button.switchToCurrentChat('🔎 Search stickers','')
+                ],
+                [
+                    Markup.button.url('➕ Add sticker','https://t.me/threej_bot'),
+                ]
             ]).reply_markup
         });
     })
@@ -27,12 +31,11 @@ module.exports.handleCommands = function(update){
             {
                 reply_markup: Markup.inlineKeyboard([
                     [
-                        Markup.button.switchToChat('🔎 Search stickers','')
+                        Markup.button.switchToChat('🔎 Search stickers',''),
+                        Markup.button.callback('🕵️‍♂️ Advance search','secondaryMenu')
                     ],
                     [
-                        Markup.button.url('➕ Add sticker','https://t.me/threej_bot')
-                    ],
-                    [
+                        Markup.button.url('➕ Add sticker','https://t.me/threej_bot'),
                         Markup.button.url('😺 Contribute','https://t.me/threej_bot')
                     ]
                 ]).reply_markup

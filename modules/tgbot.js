@@ -27,6 +27,37 @@ class Tgbot extends Threej{
     constructor(){
         super()
     }
+
+    async searchStickersFromEmoji(emoji){
+        try {
+            return await this.query(
+                'SELECT * FROM ?? WHERE EMOJI = ?',
+                [
+                    process.env.STICKERSTABLE,
+                    emoji
+                ]
+            )
+        } catch (error) {
+            this.logError(error);
+            return false;
+        }
+    }
+
+    async searchStickerSet(setName){
+        try {
+            return await this.query(
+                'SELECT * FROM ?? WHERE ?? = ?',
+                [
+                    process.env.STICKERSETTABLE,
+                    !Math.round(setName) ? 'NAME' : 'SETID',
+                    setName || ''
+                ]
+            )
+        } catch (error) {
+            this.logError(error);
+            return false;
+        }
+    }
 }
 
 module.exports = { Tgbot };
