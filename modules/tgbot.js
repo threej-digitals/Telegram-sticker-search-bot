@@ -1,5 +1,4 @@
 const axios = require('axios');
-const qs = require('qs');
 const { Threej } = require('./threej');
 
 const CATEGORIES = ["🦁 Animals & Pets","🎎 Anime","🎨 Art & Paintings","📚 Books","🏎 Cars","💼 Career","💃🏼 Celebrity","👨‍👨‍👧‍👦 Community","⛓ Cryptocurrency","👩‍❤️‍👨 Dating","🎓 Educational","🎭 Entertainment","🧐 Facts","💰 Finance","😂 Funny","🎮 Gaming","🃏 GIFs","💻 Hacking","👩‍⚕️ Health","🧛 Horror","🧠 Knowledge","🔮 Life Hacks","💅🏻 Lifestyle","😂 Memes","🎬 Movies","🌞 Motivational","🏕 Nature","📰 News","🤵🏻 Political","🙋🏼 Personal","🖼 Photography","🏋️ Productive","💻 Programming","🔗 Promotion","🌐 Proxy","🗺 Regional","🥰 Relationship","🔬 Science","🎧 Song","📱 Social","🛒 Shopping","🕉 Spiritual","🏀 Sports","🚀 Startup","🏙 Stickers","📈 Stocks","🤴 Stories","📲 Technical","📨 Telegram","💭 Thoughts","💫 Tips & tricks","✈️ Travelling","🧵 Utility","📹 Videos","🎲 Others",""];
@@ -28,10 +27,18 @@ class Tgbot extends Threej{
         super()
     }
 
-    async searchStickersFromEmoji(emoji){
+    async searchStickersFromEmoji(emoji, options){
+        
+        var sql = 'SELECT * FROM ?? WHERE EMOJI = ? ' + 
+        (options.PREMIUM == 1 ? 'AND ISPREMIUM = 1'
+        : options.VIDEO == 1 ? 'AND ISVIDEO = 1'
+        : options.ANIMATED == 1 ? 'AND ISANIMATED = 1'
+        : options.STATIC == 1 ? 'AND ISANIMATED = 0'
+        : '') + ' LIMIT 49';
+
         try {
             return await this.query(
-                'SELECT * FROM ?? WHERE EMOJI = ?',
+                sql,
                 [
                     process.env.STICKERSTABLE,
                     emoji
@@ -43,14 +50,21 @@ class Tgbot extends Threej{
         }
     }
 
-    async searchStickerSet(setName){
+    async searchStickers(query, options){
+        var sql = 'SELECT * FROM ?? WHERE SETID IN (SELECT SETID FROM ?? WHERE NAME LIKE ? OR TITLE LIKE ?)' + 
+        (options.PREMIUM == 1 ? ' AND ISPREMIUM = 1'
+        : options.VIDEO == 1 ? ' AND ISVIDEO = 1'
+        : options.ANIMATED == 1 ? ' AND ISANIMATED = 1'
+        : options.STATIC == 1 ? ' AND ISANIMATED = 0'
+        : '') + ' LIMIT 49';
         try {
             return await this.query(
-                'SELECT * FROM ?? WHERE ?? = ?',
+                sql,
                 [
+                    process.env.STICKERSTABLE,
                     process.env.STICKERSETTABLE,
-                    !Math.round(setName) ? 'NAME' : 'SETID',
-                    setName || ''
+                    `%${query}%` || '%',
+                    `%${query}%` || '%'
                 ]
             )
         } catch (error) {
