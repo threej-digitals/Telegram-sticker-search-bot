@@ -23,7 +23,7 @@ module.exports.handleInlineQueries = async (ctx, tgbot) => {
     }
 
     //extract filter from query
-    const filter = query.match(/^([ASVP]) .*/);
+    const filter = query.match(/^([ASVP]) ?.*/);
     if(filter && filter.length === 2){
         //remove filter from query
         query = query.substring(2);
