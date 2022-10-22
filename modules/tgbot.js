@@ -51,7 +51,7 @@ class Tgbot extends Threej{
     }
 
     async searchStickers(query, options){
-        var sql = 'SELECT * FROM ?? WHERE SETID IN (SELECT SETID FROM ?? WHERE NAME LIKE ? OR TITLE LIKE ?)' + 
+        var sql = 'SELECT * FROM ?? WHERE SETID IN (SELECT SETID FROM ?? WHERE (NAME LIKE ? OR TITLE LIKE ?) AND FLAG < 1 )' + 
         (options.PREMIUM == 1 ? ' AND ISPREMIUM = 1'
         : options.VIDEO == 1 ? ' AND ISVIDEO = 1'
         : options.ANIMATED == 1 ? ' AND ISANIMATED = 1'
