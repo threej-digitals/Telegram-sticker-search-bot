@@ -72,6 +72,49 @@ class Tgbot extends Threej{
             return false;
         }
     }
+
+    /**
+     * 
+     * @param {object} error Error object received from telegram api
+     * @returns {boolean}
+    */
+    knownErrors(error){
+        const dismissableErrors = [
+            'not enough rights',
+            'message to delete not found',
+            'bot was kicked',
+            'not in the chat',
+            'need to be inviter of a user',
+            'matching document found for id',
+            'bot is not a member',
+            'user is an administrator of the chat',
+            'user_not_participant',
+            'chat_admin_required',
+            "message can't be deleted",
+            'group chat was upgraded to a supergroup',
+            'channel_private',
+            'method is available only for supergroups',
+            'have no rights to send a message',
+            'chat_write_forbidden',
+            'message identifier is not specified',
+            'demote chat creator',
+            'user_banned_in_channel',
+            'too many requests',
+            'message is not modified',
+            'user not found',
+            'webdocument_url_invalid',
+            'bot was blocked by the user',
+            'chat not found',
+            'chat is not eligible for listing.',
+            'bot can\'t initiate conversation with a user'
+        ];
+        for (const message of dismissableErrors) {
+            if (error.message.toLowerCase().indexOf(message) > -1) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 module.exports = { Tgbot };
