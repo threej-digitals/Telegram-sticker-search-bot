@@ -27,6 +27,27 @@ class Tgbot extends Threej{
         super()
     }
 
+    async logUser(user){
+        const result = await this.query('SELECT * FROM STICKERUSERS WHERE TGID = ?',[
+            user.id || 0
+        ]);
+
+        if(result.length == 0){
+            await this.query('INSERT INTO STICKERUSERS VALUES(?, ?)',[
+                user.id,
+                0
+            ]);
+            return this.user = {
+                TGID : user.id,
+                ISNSFW: 0
+            }
+        }else{
+            return this.user = result[0];
+        }
+
+        
+    }
+
     async searchStickersFromEmoji(emoji, options){
         
         var sql = 'SELECT * FROM ?? WHERE EMOJI = ? ' + 
@@ -34,7 +55,7 @@ class Tgbot extends Threej{
         : options.VIDEO == 1 ? 'AND ISVIDEO = 1'
         : options.ANIMATED == 1 ? 'AND ISANIMATED = 1'
         : options.STATIC == 1 ? 'AND ISANIMATED = 0'
-        : '') + ' LIMIT 49';
+        : '') + ' AND SETID IN(SELECT SETID FROM STICKERSET WHERE ' + (this.user.ISNSFW ? 'FLAG > 1' : 'FLAG < 1') + ') LIMIT 49';
 
         try {
             return await this.query(
@@ -51,7 +72,7 @@ class Tgbot extends Threej{
     }
 
     async searchStickers(query, options){
-        var sql = 'SELECT * FROM ?? WHERE SETID IN (SELECT SETID FROM ?? WHERE (NAME LIKE ? OR TITLE LIKE ?) AND FLAG < 1 )' + 
+        var sql = 'SELECT * FROM ?? WHERE SETID IN (SELECT SETID FROM ?? WHERE (NAME LIKE ? OR TITLE LIKE ?) ' + (this.user.ISNSFW ? '' : 'AND FLAG < 1') + ' )' + 
         (options.PREMIUM == 1 ? ' AND ISPREMIUM = 1'
         : options.VIDEO == 1 ? ' AND ISVIDEO = 1'
         : options.ANIMATED == 1 ? ' AND ISANIMATED = 1'
@@ -71,6 +92,13 @@ class Tgbot extends Threej{
             this.logError(error);
             return false;
         }
+    }
+
+    async updatePreference(options){
+        return await this.query('UPDATE STICKERUSERS SET ISNSFW = ? WHERE TGID = ?',[
+            options.ISNSFW || 0,
+            this.user.TGID
+        ]);
     }
 
     /**

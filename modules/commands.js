@@ -37,6 +37,9 @@ module.exports.handleCommands = function(update){
                     [
                         Markup.button.url('➕ Add sticker','https://t.me/threej_bot'),
                         Markup.button.url('😺 Contribute','https://github.com/threej-digitals/Telegram-sticker-search-bot')
+                    ],
+                    [
+                        Markup.button.callback('⚙️ Preferences', 'Preferences')
                     ]
                 ]).reply_markup
             }
